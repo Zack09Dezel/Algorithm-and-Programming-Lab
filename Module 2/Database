@@ -11,21 +11,26 @@ struct Mahasiswa
     float GPA;
 };
 
-bool Input(char* answer){
-    return (strcmp(answer, "Yes") == 0 || strcmp(answer, "No") == 0);
-}
+int main(){
 
-int main() {
+    FILE *fl = fopen("C:\\Arts and Literatures\\Studying Progress\\College\\Academic Year\\2nd Semester\\CS\\Algorithm and Programming Practicum\\Experiments\\Assignments\\Database\\Database.csv", "a");
+    if (fl == NULL)
+    {
+        printf("Failed to open the file.\n");
+        exit(1);
+    }
 
-    int studentsTotal;
     long long int studentIDNumber;
-    char studentName[50], category[10], answer[3];
+    int studentsTotal, entryYear;
+    char studentName[50];
+    float gpa;
 
     printf("\nHow many students? ");
     scanf("%d", &studentsTotal);
     struct Mahasiswa students[studentsTotal]; 
 
-    for(int i = 0; i < studentsTotal; i++) {
+    for(int i = 0; i < studentsTotal; i++){
+
         printf("\nStudent ID Number: ");
         scanf("%lld", &students[i].studentID);
         printf("Name: ");
@@ -34,75 +39,26 @@ int main() {
         scanf("%d", &students[i].entryYear);
         printf("GPA of said students: ");
         scanf("%f", &students[i].GPA);
+
+        fprintf(fl, "%lld,%s,%d,%.2f\n", students[i].studentID, students[i].name, students[i].entryYear, students[i].GPA);
     }
 
-    printf("\nDo you want to display student's data?\n(Yes/No)\n\n");
-    scanf("%s", answer);
+    fclose(fl);
 
-    while (!Input(answer)){
-            printf("Please enter either 'Yes' or 'No': ");
-            scanf("%s", answer);
+    fl = fopen("C:\\Arts and Literatures\\Studying Progress\\College\\Academic Year\\2nd Semester\\CS\\Algorithm and Programming Practicum\\Experiments\\Assignments\\Database\\Database.csv", "r");
+    if(fl == NULL)
+    {
+        printf("Failed to open the file for reading.\n");
+        exit(1);
     }
 
-    do {
+    struct Mahasiswa mhs;
+    printf("| %-11s| %-14s| %-17s | %s |\n", "Student ID", "Name", "Year of Entry", "GPA");
+    while(fscanf(fl, "%lld,%[^,],%d,%f\n", &mhs.studentID, mhs.name, &mhs.entryYear, &mhs.GPA) != EOF){
+        printf("| %-11lld| %-14s| %-17d | %.2f |\n", mhs.studentID, mhs.name, mhs.entryYear, mhs.GPA);
+    }
 
-        if(strcmp(answer, "Yes") == 0) {
-
-            do {
-
-                printf("\nOn what category would you want to display the student's data?\n1. ID\n2. Name\n3. Year of Entry\n4. GPA\n\n");
-                scanf("%s", category);
-
-                if(strcmp(category, "ID") == 0) {
-                    printf("\nPlease Type the ID Number: \n");
-                    scanf("%lld", &studentIDNumber); 
-                    for(int i = 0; i < studentsTotal; i++) {
-                        if(students[i].studentID == studentIDNumber) {
-                            printf("\nStudent ID: %lld\n", students[i].studentID);
-                            printf("Name: %s\n", students[i].name);
-                            printf("Year of Entry %d\n", students[i].entryYear);
-                            printf("GPA: %.2f\n", students[i].GPA);
-                            break;
-                        }
-                    }
-
-                } else if(strcmp(category, "Name") == 0) {
-                    printf("\nPlease Type the Name: \n");
-                    scanf(" %[^\n]", studentName); 
-                    for(int i = 0; i < studentsTotal; i++) {
-                        if(strcmp(students[i].name, studentName) == 0) {
-                            printf("\nStudent ID: %lld\n", students[i].studentID);
-                            printf("Name: %s\n", students[i].name);
-                            printf("Year of Entry %d\n", students[i].entryYear);
-                            printf("GPA: %.2f\n", students[i].GPA);
-                            break;
-                        }
-                    }
-                }
-
-                printf("\nDo you want to display another student's data?\n(Yes/No)\n\n");
-                scanf("%s", answer);
-
-                while (!Input(answer)){
-                    printf("Please enter either 'Yes' or 'No': ");
-                    scanf("%s", answer);
-                }
-
-            }while(strcmp(answer, "Yes") == 0);
-
-        }else if(strcmp(answer, "No") == 0) {
-            break;
-        }
-
-        // printf("\nDo you want to display student's data again?\n(Yes/No)\n\n");
-        // scanf("%s", answer);
-
-        // while (!Input(answer)){
-        //     printf("Please enter either 'Yes' or 'No': ");
-        //     scanf("%s", answer);
-        // }
-
-    } while(strcmp(answer, "Yes") == 0);
+    fclose(fl);
 
     return 0;
 }
